@@ -1,0 +1,71 @@
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '7.0.17'
+    id 'net.minecraftforge.jarjar' version '0.2.3'
+}
+
+version='1.0.0'
+
+group='dev.wigo'
+
+base { archivesName='wigo-forge-1.21' }
+
+jarJar.register()
+
+tasks.named('jar') { archiveClassifier='slim' }
+
+tasks.named('jarJar') { archiveClassifier='' }
+
+java { toolchain.languageVersion=JavaLanguageVersion.of(21) }
+
+minecraft {
+    mappings channel: 'official', version: '1.21'
+    accessTransformers=files('src/main/resources/META-INF/accesstransformer.cfg')
+    runs {
+        configureEach {
+            systemProperty 'eventbus.api.strictRuntimeChecks','true'
+            args '--mixin.config=wigo.mixins.json','--mixin.config=wigo.client.mixins.json','--mixin.config=wigo.forge.mixins.json'
+            mods {
+                wigo {
+                    source sourceSets.main
+                }
+
+            }
+        }
+        register('client') {
+            workingDir=layout.buildDirectory.dir('run/client')
+
+        }
+        register('server') { workingDir=layout.buildDirectory.dir('run/server'); args '--nogui' }
+    }
+}
+
+repositories {
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    mavenCentral()
+}
+
+dependencies {
+    implementation minecraft.dependency('net.minecraftforge:forge:1.21-51.0.33')
+    implementation 'io.github.llamalad7:mixinextras-forge:0.5.4'
+    compileOnly 'io.github.llamalad7:mixinextras-common:0.5.4'
+    jarJar 'io.github.llamalad7:mixinextras-forge:0.5.4'
+}
+
+tasks.withType(JavaCompile).configureEach { options.encoding='UTF-8';options.release=21 }
+
+configurations.matching { it.name in ['compileClasspath','runtimeClasspath']||it.name.endsWith('CompileClasspath')||it.name.endsWith('RuntimeClasspath') }.configureEach {
+    attributes.attribute(org.gradle.api.attributes.java.TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE,21)
+}
+
+jar {
+    preserveFileTimestamps=false
+    reproducibleFileOrder=true
+    manifest { attributes 'MixinConfigs':'wigo.mixins.json,wigo.client.mixins.json,wigo.forge.mixins.json' }
+}
+
+configurations.configureEach { resolutionStrategy.force 'net.sf.jopt-simple:jopt-simple:5.0.4' }
+
+apply from: '../../gradle/release.gradle'

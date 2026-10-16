@@ -1,0 +1,93 @@
+package dev.wigo.mixin;
+
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.*;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.platform.Window;
+import dev.wigo.client.*;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import java.util.function.*;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.callback.*;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
+import java.util.List;
+
+@Mixin(GuiGraphics.class)
+public abstract class GraphicsCaptureMixin {
+    private GuiGraphics graphics() {return (GuiGraphics)(Object)this;}
+    @WrapMethod(method="renderTooltipInternal")
+    private void fitTooltip(Font font,List<ClientTooltipComponent> components,int x,int y,ClientTooltipPositioner positioner,Operation<Void> original) {
+        if(GuiCapture.tooltipCanvas()==null||components.isEmpty()) {original.call(font,components,x,y,positioner);return;}
+        int width=0,height=components.size()==1?-2:0;
+        for(var component:components) {width=Math.max(width,component.getWidth(font));height+=component.getHeight();}
+        var desired=positioner.positionTooltip(graphics().guiWidth(),graphics().guiHeight(),x,y,width,height);
+        LegacyTooltipLayout.draw(graphics(),width,height,desired.x(),desired.y(),0,0,
+                ()->original.call(font,components,x,y,(ClientTooltipPositioner)(sw,sh,mx,my,w,h)->new org.joml.Vector2i(0,0)));
+    }
+    @Inject(method="guiWidth",at=@At("HEAD"),cancellable=true)
+    private void width(CallbackInfoReturnable<Integer> ci) {if(GuiViewport.width()!=0)ci.setReturnValue(GuiViewport.width());}
+    @Inject(method="guiHeight",at=@At("HEAD"),cancellable=true)
+    private void height(CallbackInfoReturnable<Integer> ci) {if(GuiViewport.height()!=0)ci.setReturnValue(GuiViewport.height());}
+    @Inject(method="renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;IIII)V",at=@At("HEAD"),cancellable=true)
+    private void item(LivingEntity entity,Level level,ItemStack stack,int x,int y,int seed,int z,CallbackInfo ci) {
+        if(GuiCapture.recording()) {GuiCapture.record(()->GuiCapture.item(graphics(),stack,x,y,seed));ci.cancel();}
+    }
+    @Inject(method="innerBlit(Lnet/minecraft/resources/ResourceLocation;IIIIIFFFF)V",at=@At("HEAD"),cancellable=true)
+    private void texture(ResourceLocation id,int x0,int x1,int y0,int y1,int z,float u0,float u1,float v0,float v1,CallbackInfo ci) {
+        if(GuiCapture.recording()) {GuiCapture.record(()->GuiCapture.texture(graphics(),id,x0,y0,x1,y1,u0,u1,v0,v1,-1));ci.cancel();}
+    }
+    @Inject(method="innerBlit(Lnet/minecraft/resources/ResourceLocation;IIIIIFFFFFFFF)V",at=@At("HEAD"),cancellable=true)
+    private void texture(ResourceLocation id,int x0,int x1,int y0,int y1,int z,float u0,float u1,float v0,float v1,float r,float g,float b,float a,CallbackInfo ci) {
+        int color=(Math.round(a*255)<<24)|(Math.round(r*255)<<16)|(Math.round(g*255)<<8)|Math.round(b*255);
+        if(GuiCapture.recording()) {GuiCapture.record(()->GuiCapture.texture(graphics(),id,x0,y0,x1,y1,u0,u1,v0,v1,color));ci.cancel();}
+    }
+    @Inject(method="blitSprite(Lnet/minecraft/resources/ResourceLocation;IIIII)V",at=@At("HEAD"),cancellable=true)
+    private void sprite(ResourceLocation id,int x,int y,int z,int w,int h,CallbackInfo ci) {
+        if(GuiCapture.recording()) {GuiCapture.record(()->GuiCapture.sprite(graphics(),id,0,0,0,0,x,y,w,h,-1));ci.cancel();}
+    }
+    @Inject(method="blitSprite(Lnet/minecraft/resources/ResourceLocation;IIIIIIIII)V",at=@At("HEAD"),cancellable=true)
+    private void sprite(ResourceLocation id,int sw,int sh,int u,int v,int x,int y,int z,int w,int h,CallbackInfo ci) {
+        if(GuiCapture.recording()) {GuiCapture.record(()->GuiCapture.sprite(graphics(),id,sw,sh,u,v,x,y,w,h,-1));ci.cancel();}
+    }
+    @Inject(method="blitSprite(Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;IIIII)V",at=@At("HEAD"),cancellable=true)
+    private void atlas(TextureAtlasSprite sprite,int x,int y,int z,int w,int h,CallbackInfo ci) {
+        if(GuiCapture.recording()) {GuiCapture.record(()->GuiCapture.atlas(graphics(),sprite,0,0,0,0,x,y,w,h,-1));ci.cancel();}
+    }
+    @Inject(method="blitSprite(Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;IIIIIIIII)V",at=@At("HEAD"),cancellable=true)
+    private void atlas(TextureAtlasSprite sprite,int sw,int sh,int u,int v,int x,int y,int z,int w,int h,CallbackInfo ci) {
+        if(GuiCapture.recording()) {GuiCapture.record(()->GuiCapture.atlas(graphics(),sprite,sw,sh,u,v,x,y,w,h,-1));ci.cancel();}
+    }
+    @Inject(method="fill(Lnet/minecraft/client/renderer/RenderType;IIIIII)V",at=@At("HEAD"),cancellable=true)
+    private void rectangle(RenderType type,int x0,int y0,int x1,int y1,int z,int color,CallbackInfo ci) {
+        if(GuiCapture.recording()) {GuiCapture.record(()->GuiCapture.rectangle(graphics(),x0,y0,x1,y1,color,color));ci.cancel();}
+    }
+    @Inject(method="fillGradient(Lnet/minecraft/client/renderer/RenderType;IIIIIII)V",at=@At("HEAD"),cancellable=true)
+    private void gradient(RenderType type,int x0,int y0,int x1,int y1,int top,int bottom,int z,CallbackInfo ci) {
+        if(GuiCapture.recording()) {GuiCapture.record(()->GuiCapture.rectangle(graphics(),x0,y0,x1,y1,top,bottom));ci.cancel();}
+    }
+    @Inject(method="enableScissor",at=@At("HEAD"))
+    private void scissor(int x0,int y0,int x1,int y1,CallbackInfo ci) {GuiCapture.scissor(graphics(),x0,y0,x1,y1);}
+    @Inject(method="disableScissor",at=@At("HEAD"))
+    private void scissor(CallbackInfo ci) {GuiCapture.unscissor();}
+    @Inject(method={"flush","applyScissor"},at=@At("HEAD"),cancellable=true)
+    private void noGpuDuringCapture(CallbackInfo ci) {if(GuiCapture.recording())ci.cancel();}
+    @WrapOperation(method="applyScissor",at=@At(value="INVOKE",target="Lcom/mojang/blaze3d/platform/Window;getHeight()I"))
+    private int ownHeight(Window window,Operation<Integer> original) {return GuiScratch.target()==null?original.call(window):GuiScratch.target().height;}
+    @WrapOperation(method="applyScissor",at=@At(value="INVOKE",target="Lcom/mojang/blaze3d/platform/Window;getGuiScale()D"))
+    private double ownScale(Window window,Operation<Double> original) {return GuiScratch.target()==null?original.call(window):(double)GuiScratch.scale();}
+    @WrapOperation(method="enableScissor",at=@At(value="NEW",target="(IIII)Lnet/minecraft/client/gui/navigation/ScreenRectangle;"))
+    private ScreenRectangle panelScissor(int x,int y,int width,int height,Operation<ScreenRectangle> original) {
+        ScreenRectangle rect=original.call(x,y,width,height);
+        return GuiScratch.target()==null?rect:LegacyBounds.transform(rect,graphics().pose().last().pose());
+    }
+}

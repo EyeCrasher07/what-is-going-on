@@ -1,0 +1,24 @@
+modLoader="javafml"
+loaderVersion="[62,)"
+license="GPL-3.0-only"
+
+[[mods]]
+modId="wigo"
+version="${version}"
+displayName="What is going on (WIGO)"
+logoFile="assets/wigo/icon.png"
+description='''See nearby players' live menus and chat drafts using your local Minecraft resources.'''
+
+[[dependencies.wigo]]
+modId="forge"
+mandatory=true
+versionRange="[62.0.9,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.wigo]]
+modId="minecraft"
+mandatory=true
+versionRange="[26.1]"
+ordering="NONE"
+side="BOTH"

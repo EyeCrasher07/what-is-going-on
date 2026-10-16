@@ -1,0 +1,454 @@
+#
+# 64 алмаза, стало 63 — описание предмета берётся из кэша, передаётся число 63.
+# A missing translation requests the original text instead of a wrong caption.
+# Accessibility settings / Специальные возможности
+# Advancements / Достижения
+# After changing network options, reconnect players. An incompatible compact
+# Already working, but still being tested.
+# Anvils / Наковальни
+# Arbitrary names and text remain literal. Disabled by default.
+# Beacons / Маяки
+# Blast furnaces / Плавильные печи
+# Both formats show the same menus. Network changes require reconnecting.
+# Both modes respect menu bans, sharing choices, player lists and distance.
+# Brewing stands / Зельеварки
+# Cartography tables / Столы картографа
+# Changed data is sent as field updates. Example: 64 diamonds become 63;
+# Changes reload automatically within 5 seconds; invalid edits keep the last valid rules.
+# Changing network options affects new connections: reconnect to apply them.
+# Chat drafts and nearby draft preview / Черновики чата и их предпросмотр
+# Chat reports / Жалобы на сообщения
+# Chat settings / Настройки чата
+# Chests: 1 rows / Сундуки: 1 рядов
+# Chests: 2 rows / Сундуки: 2 рядов
+# Chests: 3 rows / Сундуки: 3 рядов
+# Chests: 4 rows / Сундуки: 4 рядов
+# Chests: 5 rows / Сундуки: 5 рядов
+# Chests: 6 rows / Сундуки: 6 рядов
+# Clients negotiate the format once on joining and remember it until leaving.
+# Command block minecarts / Вагонетки с командным блоком
+# Command blocks / Командные блоки
+# Compact numeric packets, resource IDs, field patches and connection-local caches.
+# Controls / Управление
+# Crafters / Автоматические верстаки
+# Crafting tables and recipe books / Верстаки и их книги рецептов
+# Creative inventory and tabs / Инвентарь и вкладки креатива
+# Credits and attribution / Титры и лицензии
+# Custom names and typed/unknown text remain literal. If a translation file
+# Custom names, typed text and unknown captions are sent as ordinary text.
+# Custom names, typed text and unknown translations remain literal.
+# Debug options / Настройки отладки
+# Dispensers and droppers / Раздатчики и выбрасыватели
+# ECONOMICAL (false): the server sends menus only while the observer's
+# ECONOMICAL (false, default): send menus only while the observer's CHARACTER
+# ENGLISH
+# Editing hanging signs / Редактирование подвесных табличек
+# Editing signs / Редактирование табличек
+# Enchanting tables / Чародейские столы
+# Ender chests / Эндер-сундуки
+# Ender chests have a separate rule; chest minecarts use their row type.
+# Ender chests have their own rule; chest minecarts follow their row type.
+# Example: a Russian owner and an English observer still see the owner's
+# Example: owner uses Russian, observer uses English. The observer still
+# Example: the owner uses Russian and the observer uses English.
+# F3+F4 game mode switcher / Переключение режима игры F3+F4
+# F5 example: owner chooses Only behind; your character stands in front,
+# F5 example: owner selects Only behind; your character stands in front,
+# Font settings / Настройки шрифта
+# Friends list / Список друзей
+# Furnaces / Печи
+# Game rules / Правила игры
+# Grindstones / Точила
+# Hoppers / Воронки
+# Horse, donkey and other mount inventories / Инвентари лошадей, ослов и других ездовых животных
+# INDIVIDUAL MENUS / ОТДЕЛЬНЫЕ МЕНЮ — the final section below / в самом низу.
+# If a translation is missing, the original text is requested.
+# Individual menus — settings are at the bottom of this file
+# Install the same updated WIGO on server and clients for all per-menu rules.
+# Jigsaw blocks / Блоки пазла
+# Key bindings / Назначение клавиш
+# Keys for newer Minecraft versions are harmless on older versions.
+# LOCAL TRANSLATIONS / ЛОКАЛЬНЫЕ ПЕРЕВОДЫ
+# Language selection / Выбор языка
+# Lecterns / Кафедры
+# Legacy smithing tables (1.19.4) / Старые кузнечные столы (1.19.4)
+# Local translations
+# Looms / Ткацкие станки
+# Main game settings / Главное меню настроек
+# Menu IDs:
+# Menu bans reload within 5 seconds without reconnecting. Invalid edits keep
+# Menu rules reload within 5 seconds; invalid edits keep the last valid rules.
+# Minecraft files. One ID represents the same caption in every language.
+# Minecraft version are unused. Update WIGO on server and clients together.
+# Mouse settings / Настройки мыши
+# Music and sound settings / Музыка и звуки
+# NETWORK FORMAT / ФОРМАТ ПЕРЕДАЧИ
+# Name of an unsupported menu (no contents) / Название неподдерживаемого меню (без содержимого)
+# Name reports / Жалобы на никнеймы
+# Network format
+# Network options are negotiated once on join; changes apply after reconnecting.
+# OBSERVER DISPLAY / РЕЖИМЫ НАБЛЮДАТЕЛЯ
+# Observer display — chosen in F8 > Other menus
+# On older servers without smooth support the client uses economical mode.
+# One caption uses the same ID in every language.
+# Online settings / Сетевые настройки
+# Other compact optimizations still work when compact_packets = true.
+# Other vanilla screens and confirmation dialogs / Прочие ванильные экраны и окна подтверждения
+# Pause menu / Меню паузы
+# Personal choice, not a server key: config/wigo.json stores smoothMenus.
+# Player reporting / Жалобы на игроков
+# Reading books / Чтение книг
+# Recipe books and effect sidebars follow their inventory/crafting menu rule.
+# Recipe books and effects follow the inventory/crafting rule. WIGO's F8
+# Repeated descriptions are cached, so they do not need to be sent again.
+# Replaces standard item, texture and resource names with short numeric IDs.
+# Report message selection / Выбор сообщений для жалобы
+# Report reason selection / Выбор причины жалобы
+# Requires compact_packets = true. Changes require reconnecting.
+# Resource pack selection / Выбор наборов ресурсов
+# Russian caption, read from the observer's local Minecraft language files.
+# SMOOTH (true): keep receiving on both sides within 8 blocks. The CAMERA,
+# SMOOTH (true): receive updates on either side within the normal 8-block
+# Sends a short translation-key ID and the owner's language instead of
+# Shulker boxes / Шалкеровые ящики
+# Signing books / Подписание книг
+# Skin customization / Настройки внешнего вида
+# Skin reports / Жалобы на скины
+# Small updates are combined into one packet. The cache survives reopening
+# Smithing tables / Кузнечные столы
+# Smokers / Коптильни
+# Social interactions / Социальные взаимодействия
+# Standard captions use local Minecraft translations in the owner's language.
+# Statistics: all tabs / Статистика: все вкладки
+# Stonecutters / Камнерезы
+# Structure blocks / Блоки-конструкторы
+# Survival inventory, effects and recipe book / Инвентарь выживания, эффекты и книга рецептов
+# Telemetry settings / Настройки телеметрии
+# Test blocks / Тестовые блоки
+# Test instance blocks / Блоки экземпляра теста
+# The client saves the choice as smoothMenus in config/wigo.json (default false).
+# The forbidden side has no texture. Hidden contents still update locally,
+# The format is negotiated once on joining and remembered until disconnect.
+# The observer chooses the mode. All menu bans, owner sharing choices,
+# The observer still sees the Russian inventory caption, using their
+# These are personal settings in F8 > Other menus, not server config keys.
+# These rules do not disable blocks or the owner's own interface.
+# This option applies to compatible compact connections; otherwise text is used.
+# Unsupported compact formats/dictionaries automatically use the previous format.
+# Video settings / Настройки графики
+# Villager trading / Торговля с жителями
+# WIGO configuration guide / пояснения режимов v2
+# WIGO configuration guide v3
+# WIGO configuration guide v4
+# WIGO configuration guide v5
+# WIGO settings (F8) / Настройки WIGO (F8)
+# WIGO settings are shareable only when the player explicitly enables them.
+# WIGO — server menu visibility / видимость меню на сервере
+# World options / Настройки мира
+# Writing books / Редактирование книг
+# allowed sector. There is no texture on the forbidden side. Costs more
+# and send only changed fields. Example: a stack changes from 64 to 63;
+# and send the new count. false uses the previous format with the same menus,
+# and the owner's language. The observer reads that language from local
+# but your F5 camera is behind the owner. Smooth shows the menu through that
+# but your F5 camera moves behind the owner. Smooth shows the menu through
+# camera. Economical waits until your character moves to an allowed side.
+# can still use the block/menu. Example: "minecraft:ender_chest" = false
+# changed fields. Example: 64 diamonds become 63; reuse the item description
+# character stands on an allowed side. Crossing the boundary stops/starts
+# compact_packets = false: use the previous packet format. Menus look the
+# compact_packets = false: прежний формат пакетов. Вид меню тот же,
+# compact_packets = true (default): send short numeric IDs, reuse cached data,
+# compact_packets = true (default): short IDs, cached descriptions and only
+# compact_packets = true (по умолчанию): короткие ID, кэш описаний и передача
+# compact_packets = true (по умолчанию): короткие числовые ID, повторное
+# compact_packets — English
+# compact_packets — Русский
+# current snapshot. Saves traffic while the menu is hidden.
+# format or dictionary falls back to the previous format automatically.
+# hides ender-chest contents and prevents enabling their sharing in F8.
+# hides ender-chest contents from observers and disables its F8 sharing toggle.
+# including F5, controls visibility, with a fade inside the allowed sector.
+# is missing, request the original text. Requires compatible compact mode.
+# its item description is reused, and only the new count is transmitted.
+# local Minecraft language files.
+# menus and is cleared when the connection ends.
+# minecraft:accessibility — Accessibility settings
+# minecraft:accessibility — Специальные возможности
+# minecraft:advancements — Advancements
+# minecraft:advancements — Достижения
+# minecraft:anvil — Anvils
+# minecraft:anvil — Наковальни
+# minecraft:beacon — Beacons
+# minecraft:beacon — Маяки
+# minecraft:blast_furnace — Blast furnaces
+# minecraft:blast_furnace — Плавильные печи
+# minecraft:book_edit — Writing books
+# minecraft:book_edit — Редактирование книг
+# minecraft:book_sign — Signing books
+# minecraft:book_sign — Подписание книг
+# minecraft:book_view — Reading books
+# minecraft:book_view — Чтение книг
+# minecraft:brewing_stand — Brewing stands
+# minecraft:brewing_stand — Зельеварки
+# minecraft:cartography_table — Cartography tables
+# minecraft:cartography_table — Столы картографа
+# minecraft:chat — Chat drafts and nearby draft preview
+# minecraft:chat — Черновики чата и их предпросмотр
+# minecraft:chat_settings — Chat settings
+# minecraft:chat_settings — Настройки чата
+# minecraft:command_block — Command blocks
+# minecraft:command_block — Командные блоки
+# minecraft:command_minecart — Command block minecarts
+# minecraft:command_minecart — Вагонетки с командным блоком
+# minecraft:controls — Controls
+# minecraft:controls — Управление
+# minecraft:crafter_3x3 — Crafters
+# minecraft:crafter_3x3 — Автоматические верстаки
+# minecraft:crafting — Crafting tables and recipe books
+# minecraft:crafting — Верстаки и их книги рецептов
+# minecraft:creative_inventory — Creative inventory and tabs
+# minecraft:creative_inventory — Инвентарь и вкладки креатива
+# minecraft:credits — Credits and attribution
+# minecraft:credits — Титры и лицензии
+# minecraft:debug_options — Debug options
+# minecraft:debug_options — Настройки отладки
+# minecraft:enchantment — Enchanting tables
+# minecraft:enchantment — Чародейские столы
+# minecraft:ender_chest — Ender chests
+# minecraft:ender_chest — Эндер-сундуки
+# minecraft:font_settings — Font settings
+# minecraft:font_settings — Настройки шрифта
+# minecraft:friends — Friends list
+# minecraft:friends — Список друзей
+# minecraft:furnace — Furnaces
+# minecraft:furnace — Печи
+# minecraft:game_mode — F3+F4 game mode switcher
+# minecraft:game_mode — Переключение режима игры F3+F4
+# minecraft:game_rules — Game rules
+# minecraft:game_rules — Правила игры
+# minecraft:generic_3x3 — Dispensers and droppers
+# minecraft:generic_3x3 — Раздатчики и выбрасыватели
+# minecraft:generic_9x1 — Chests: 1 rows
+# minecraft:generic_9x1 — Сундуки: 1 рядов
+# minecraft:generic_9x2 — Chests: 2 rows
+# minecraft:generic_9x2 — Сундуки: 2 рядов
+# minecraft:generic_9x3 — Chests: 3 rows
+# minecraft:generic_9x3 — Сундуки: 3 рядов
+# minecraft:generic_9x4 — Chests: 4 rows
+# minecraft:generic_9x4 — Сундуки: 4 рядов
+# minecraft:generic_9x5 — Chests: 5 rows
+# minecraft:generic_9x5 — Сундуки: 5 рядов
+# minecraft:generic_9x6 — Chests: 6 rows
+# minecraft:generic_9x6 — Сундуки: 6 рядов
+# minecraft:grindstone — Grindstones
+# minecraft:grindstone — Точила
+# minecraft:hanging_sign_edit — Editing hanging signs
+# minecraft:hanging_sign_edit — Редактирование подвесных табличек
+# minecraft:hopper — Hoppers
+# minecraft:hopper — Воронки
+# minecraft:horse_inventory — Horse, donkey and other mount inventories
+# minecraft:horse_inventory — Инвентари лошадей, ослов и других ездовых животных
+# minecraft:inventory — Survival inventory, effects and recipe book
+# minecraft:inventory — Инвентарь выживания, эффекты и книга рецептов
+# minecraft:jigsaw_block — Jigsaw blocks
+# minecraft:jigsaw_block — Блоки пазла
+# minecraft:key_binds — Key bindings
+# minecraft:key_binds — Назначение клавиш
+# minecraft:language — Language selection
+# minecraft:language — Выбор языка
+# minecraft:lectern — Lecterns
+# minecraft:lectern — Кафедры
+# minecraft:legacy_smithing — Legacy smithing tables (1.19.4)
+# minecraft:legacy_smithing — Старые кузнечные столы (1.19.4)
+# minecraft:loom — Looms
+# minecraft:loom — Ткацкие станки
+# minecraft:merchant — Villager trading
+# minecraft:merchant — Торговля с жителями
+# minecraft:mouse_settings — Mouse settings
+# minecraft:mouse_settings — Настройки мыши
+# minecraft:online_settings — Online settings
+# minecraft:online_settings — Сетевые настройки
+# minecraft:options — Main game settings
+# minecraft:options — Главное меню настроек
+# minecraft:pause — Pause menu
+# minecraft:pause — Меню паузы
+# minecraft:report_chat — Chat reports
+# minecraft:report_chat — Жалобы на сообщения
+# minecraft:report_chat_selection — Report message selection
+# minecraft:report_chat_selection — Выбор сообщений для жалобы
+# minecraft:report_name — Name reports
+# minecraft:report_name — Жалобы на никнеймы
+# minecraft:report_player — Player reporting
+# minecraft:report_player — Жалобы на игроков
+# minecraft:report_reason — Report reason selection
+# minecraft:report_reason — Выбор причины жалобы
+# minecraft:report_skin — Skin reports
+# minecraft:report_skin — Жалобы на скины
+# minecraft:resource_packs — Resource pack selection
+# minecraft:resource_packs — Выбор наборов ресурсов
+# minecraft:shulker_box — Shulker boxes
+# minecraft:shulker_box — Шалкеровые ящики
+# minecraft:sign_edit — Editing signs
+# minecraft:sign_edit — Редактирование табличек
+# minecraft:skin_settings — Skin customization
+# minecraft:skin_settings — Настройки внешнего вида
+# minecraft:smithing — Smithing tables
+# minecraft:smithing — Кузнечные столы
+# minecraft:smoker — Smokers
+# minecraft:smoker — Коптильни
+# minecraft:social_interactions — Social interactions
+# minecraft:social_interactions — Социальные взаимодействия
+# minecraft:sound_settings — Music and sound settings
+# minecraft:sound_settings — Музыка и звуки
+# minecraft:statistics — Statistics: all tabs
+# minecraft:statistics — Статистика: все вкладки
+# minecraft:stonecutter — Stonecutters
+# minecraft:stonecutter — Камнерезы
+# minecraft:structure_block — Structure blocks
+# minecraft:structure_block — Блоки-конструкторы
+# minecraft:telemetry — Telemetry settings
+# minecraft:telemetry — Настройки телеметрии
+# minecraft:test_block — Test blocks
+# minecraft:test_block — Тестовые блоки
+# minecraft:test_instance_block — Test instance blocks
+# minecraft:test_instance_block — Блоки экземпляра теста
+# minecraft:video_settings — Video settings
+# minecraft:video_settings — Настройки графики
+# minecraft:world_options — World options
+# minecraft:world_options — Настройки мира
+# optimizations still work. true sends a shared translation-key ID and the
+# owner's language. One ID represents the same caption in every language.
+# player lists and distance limits continue to apply in both modes.
+# radius. The actual CAMERA determines visibility, with a fade inside the
+# same, but usually need more traffic. Useful for comparison/compatibility.
+# screen is shared only if the owner enables it. Menus absent from your
+# sees "Инвентарь", reconstructed from their local Russian language file.
+# so this mode uses more traffic. Older servers use economical mode.
+# standard Minecraft captions. The observer restores the text locally.
+# stands on an allowed side. Leaving stops transmission; returning needs a
+# that camera. Economical receives no menu until your character moves behind.
+# the item description is reused from the cache and the new count is sent.
+# the last valid rules. Rules do not disable gameplay or the owner's own UI.
+# traffic while hidden because its contents keep updating locally.
+# translation_ids = false (default): captions are transmitted as text.
+# translation_ids = false (default): send captions as text; other compact
+# translation_ids = false (по умолчанию): надписи передаются текстом.
+# translation_ids = false (по умолчанию): надписи передаются текстом;
+# translation_ids = true: standard captions use a shared translation-key ID
+# translation_ids = true: стандартные надписи передаются ID ключа перевода
+# translation_ids — English
+# translation_ids — Русский
+# transmission; reopening needs a snapshot. Saves traffic on the hidden side.
+# true permits sharing; false blocks transmission for everyone. The owner
+# true permits sharing; false blocks transmission to observers. The owner
+# true разрешает передачу; false запрещает её для всех. Сам владелец может
+# true разрешает передачу; false запрещает её наблюдателям. Сам владелец
+# true: compact format, enabled by default. false: previous packet format.
+# true: enable caption IDs. false: send captions as text, the default.
+# true: share this menu with nearby players. false: do not transmit or display it.
+# true: включить ID надписей. false: передавать текст, значение по умолчанию.
+# true: компактный формат, включён по умолчанию. false: прежний формат.
+# true: показывать меню игрокам рядом. false: не передавать и не показывать его.
+# usually at a higher traffic cost.
+# wigo:other_vanilla — Other vanilla screens and confirmation dialogs
+# wigo:other_vanilla — Прочие ванильные экраны и окна подтверждения
+# wigo:settings — WIGO settings (F8)
+# wigo:settings — Настройки WIGO (F8)
+# wigo:unsupported — Name of an unsupported menu (no contents)
+# wigo:unsupported — Название неподдерживаемого меню (без содержимого)
+# «Инвентарь» из своих локальных русских файлов Minecraft.
+# В экономном данных нет, пока сам персонаж не перейдёт назад.
+# Видимость проверяется по КАМЕРЕ: у границы разрешённого сектора меню плавно
+# Вместо стандартных надписей Minecraft передаёт короткий ID ключа перевода
+# Для отдельных правил всех меню обновите WIGO и на сервере, и на клиентах.
+# Если компактный формат/словарь несовместим, используется прежний формат.
+# Если перевода нет, запрашивается исходная надпись. Нужен компактный формат.
+# Заменяет стандартные названия предметов, текстур и ресурсов короткими ID.
+# Запреты меню, настройки передачи, списки игроков и радиус действуют всегда.
+# Изменения применяются за 5 секунд; при ошибке остаются последние рабочие правила.
+# Клиент сохраняет выбор в config/wigo.json: smoothMenus (по умолчанию false).
+# Клиенты согласуют формат один раз при входе и помнят его до выхода.
+# Книга рецептов и эффекты зависят от правила инвентаря/верстака. Передача F8
+# Книги рецептов и панели эффектов подчиняются правилу своего инвентаря/верстака.
+# Компактные пакеты, ID ресурсов, изменения полей и кэш соединения.
+# Личная настройка, а не ключ сервера: smoothMenus хранится в config/wigo.json.
+# Локальные переводы
+# Меню выглядят одинаково. После изменения настроек сети переподключитесь.
+# Меню, которых нет в вашей версии Minecraft, просто не используются.
+# На старом сервере без поддержки плавного режима применяется экономный.
+# Наблюдатель всё равно видит «Инвентарь», используя русский перевод
+# Названия меню по ID:
+# Например, у владельца русский язык, у наблюдателя английский.
+# Настройки WIGO показываются только если сам игрок включил их передачу.
+# Небольшие обновления объединяются в один пакет. Кэш сохраняется при
+# Нужен compact_packets = true. После изменения переподключитесь.
+# Обновляйте WIGO у игроков и на сервере вместе.
+# Опция работает при совместимом компактном соединении, иначе передаётся текст.
+# Отдельные меню — все переключатели в самом низу файла
+# ПЛАВНЫЙ (true): данные приходят с обеих сторон в радиусе 8 блоков. Видимость
+# ПЛАВНЫЙ (true): обновления приходят с обеих сторон в обычном радиусе 8 блоков.
+# Передаются изменившиеся поля. Например, было 64 алмаза, стало 63:
+# Повторяющиеся описания сохраняются в кэше и не отправляются заново.
+# Пользовательские названия, введённый и неизвестный текст передаются целиком.
+# Пользовательские названия, введённый текст и неизвестные надписи
+# Пользовательские названия, введённый текст и неизвестные переводы передаются
+# После изменения настроек сети переподключите игроков. Несовместимый
+# После изменения настроек сети переподключитесь, чтобы применить новый формат.
+# Правила меню обновляются за 5 секунд без переподключения. При ошибке остаются
+# Правила меню обновляются за 5 секунд; ошибочные правки не заменяют рабочие.
+# Правила не отключают блоки и интерфейс самого владельца.
+# При compact_packets = true остальные способы сжатия продолжают работать.
+# Пример F5: владелец выбрал «Только сзади», ваш персонаж стоит спереди,
+# Пример: у владельца русский, у наблюдателя английский — наблюдатель видит
+# Произвольные названия и текст передаются целиком. По умолчанию выключено.
+# РУССКИЙ
+# Режим выбирает наблюдатель. Запреты меню, настройки передачи владельца,
+# Режим наблюдателя — выбирается в F8 > Чужие меню
+# Стандартные надписи берутся из локальных переводов на языке владельца меню.
+# У одной надписи один ID для всех языков. Пример: у владельца русский,
+# У одной надписи один ID независимо от языка.
+# У эндер-сундуков отдельное правило; вагонетки с сундуком используют число рядов.
+# Формат передачи
+# Формат согласуется один раз при входе и сохраняется до отключения.
+# Формат согласуется один раз при входе; изменения применяются после переподключения.
+# Функция уже работает, но пока находится на стадии тестирования.
+# ЭКОНОМНЫЙ (false): сервер отправляет меню, пока ПЕРСОНАЖ наблюдателя стоит
+# ЭКОНОМНЫЙ (false, по умолчанию): данные приходят, пока ПЕРСОНАЖ стоит с
+# Эндер-сундуки имеют отдельное правило; вагонетки с сундуком — тип по числу рядов.
+# Это личная настройка F8 > Чужие меню, а не параметр сервера.
+# а камера F5 за владельцем. В плавном режиме камера видит меню; в экономном
+# а камера F5 оказалась за владельцем. В плавном режиме камера видит меню.
+# включается самим владельцем. Отсутствующие в вашей версии меню не используются.
+# данные не приходят, пока сам персонаж не перейдёт на разрешённую сторону.
+# и язык владельца. Наблюдатель восстанавливает текст из своих файлов.
+# и язык владельца. У одной надписи один ID для всех языков.
+# и языком владельца. Наблюдатель берёт этот язык из своих файлов Minecraft.
+# из кэша, передаётся новое количество. false использует прежний формат;
+# из своих локальных файлов Minecraft.
+# использование кэша и передача только изменившихся полей. Пример: было
+# компактный формат или словарь автоматически заменяется прежним форматом.
+# меню выглядят так же, но трафика обычно больше.
+# нужен актуальный снимок. Когда меню скрыто, трафика расходуется меньше.
+# нужен снимок меню. Когда меню скрыто, расход трафика меньше.
+# описание предмета берётся из кэша, передаётся новое количество.
+# остальное компактное сжатие работает. true передаёт ID ключа перевода
+# передаются обычным текстом. Если перевода нет, запрашивается исходный текст.
+# повторном открытии меню и очищается после отключения.
+# пользоваться блоком/меню. Пример: "minecraft:ender_chest" = false скрывает
+# последние рабочие правила. Игра и интерфейс владельца продолжают работать.
+# появляется. С запрещённой стороны текстуры нет. Трафика больше, потому что
+# проверяется по КАМЕРЕ, включая F5, с плавным появлением внутри разрешённого
+# продолжает пользоваться меню. Пример: "minecraft:ender_chest" = false
+# разрешённой стороны. За границей передача останавливается; при возвращении
+# с разрешённой стороны. За границей передача прекращается, при возвращении
+# сектора. С запрещённой стороны текстуры нет. Трафика больше, потому что
+# скрывает содержимое эндер-сундуков и запрещает включать их передачу в F8.
+# скрытое содержимое продолжает обновляться. Старый сервер использует экономный.
+# содержимое скрытого меню продолжает обновляться у наблюдателя.
+# содержимое эндер-сундуков от наблюдателей и запрещает включать передачу в F8.
+# списки игроков и ограничение расстояния действуют в обоих режимах.
+# только изменившихся полей. Пример: 64 алмаза, стало 63 — описание берётся
+# трафика обычно больше. Можно использовать для сравнения или совместимости.
+# у наблюдателя английский — наблюдатель всё равно видит «Инвентарь».
+# целиком. Если локального перевода нет, запрашивается исходная надпись.

@@ -1,0 +1,13 @@
+// Shared metadata and deterministic archive settings for every public project.
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+processResources {
+    inputs.property 'version', project.version
+    filesMatching(['fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', 'assets/wigo/build.properties']) {
+        expand(version: project.version)
+    }
+}
+tasks.named('jar', Jar) {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+    from(project.file('../../LICENSE')) { rename { 'LICENSE_wigo.txt' } }
+}

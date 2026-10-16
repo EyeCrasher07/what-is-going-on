@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "wigo",
+  "version": "${version}",
+  "name": "What is going on (WIGO)",
+  "accessWidener": "wigo.accesswidener",
+  "icon": "assets/wigo/icon.png",
+  "description": "Live nearby menu state rendered with the observer's local Minecraft resources.",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.wigo.platform.fabric.WigoFabric"
+    ],
+    "client": [
+      "dev.wigo.platform.fabric.WigoFabricClient"
+    ]
+  },
+  "mixins": [
+    "wigo.mixins.json",
+    {
+      "config": "wigo.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "=1.17",
+    "java": ">=17",
+    "fabric": ">=0.36.0"
+  },
+  "license": "GPL-3.0-only"
+}

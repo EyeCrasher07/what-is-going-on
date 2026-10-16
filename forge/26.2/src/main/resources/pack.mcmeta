@@ -1,0 +1,13 @@
+{
+  "pack": {
+    "description": "What is going on (WIGO)",
+    "min_format": [
+      88,
+      0
+    ],
+    "max_format": [
+      107,
+      1
+    ]
+  }
+}

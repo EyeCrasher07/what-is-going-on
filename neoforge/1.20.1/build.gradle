@@ -1,0 +1,42 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev.legacyforge' version '2.0.148'
+}
+
+version = '1.0.0'
+
+group = 'dev.wigo'
+
+base { archivesName = 'wigo-neoforge-1.20.1' }
+
+java { toolchain.languageVersion = JavaLanguageVersion.of(17) }
+
+legacyForge {
+    enable { neoForgeVersion = '1.20.1-47.1.106';disableRecompilation = true }
+    accessTransformers.from(file('src/main/resources/META-INF/accesstransformer.cfg'))
+
+    mods { wigo { sourceSet(sourceSets.main) } }
+    runs {
+        client {
+            client(); gameDirectory = project.file('build/run/client')
+
+        }
+        server { server(); gameDirectory = project.file('build/run/server'); programArgument '--nogui' }
+    }
+}
+
+repositories { mavenCentral() }
+
+dependencies { implementation(jarJar('io.github.llamalad7:mixinextras-forge:0.5.4'));compileOnly 'io.github.llamalad7:mixinextras-common:0.5.4' }
+
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+
+jar { manifest { attributes 'MixinConfigs':'wigo.mixins.json,wigo.client.mixins.json' }; preserveFileTimestamps = false; reproducibleFileOrder = true }
+
+dependencies { annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' }
+
+mixin { add sourceSets.main,'wigo.refmap.json';config 'wigo.mixins.json';config 'wigo.client.mixins.json' }
+
+dependencies { annotationProcessor 'io.github.llamalad7:mixinextras-common:0.5.4' }
+
+apply from: '../../gradle/release.gradle'

@@ -1,0 +1,8 @@
+{
+  "required": true,
+  "minVersion": "0.8.6",
+  "package": "dev.wigo.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": ["PacketEncoderMixin", "PacketDecoderMixin", "ConnectionAccessor", "ServerConnectionAccessor"],
+  "injectors": {"defaultRequire": 1}
+}

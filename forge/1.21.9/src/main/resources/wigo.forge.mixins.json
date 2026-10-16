@@ -1,0 +1,8 @@
+{
+  "required": true,
+  "minVersion": "0.8.7",
+  "package": "dev.wigo.platform.forge.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": ["ForgePayloadMixin"],
+  "injectors": {"defaultRequire": 1}
+}

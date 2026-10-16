@@ -1,0 +1,17 @@
+configurations { wigoLegacyMixinExtras }
+
+dependencies { wigoLegacyMixinExtras 'io.github.llamalad7:mixinextras-common:0.5.4' }
+
+configurations.configureEach {
+    exclude group:'io.github.llamalad7',module:'mixinextras-forge'
+}
+
+def extrasDirectory=layout.buildDirectory.dir('generated/legacyMixinExtras')
+
+tasks.register('embedLegacyMixinExtras',Sync) {
+    from { configurations.wigoLegacyMixinExtras.collect { zipTree(it) } }
+    include 'com/llamalad7/mixinextras/**','LICENSE*'
+    into extrasDirectory
+}
+
+sourceSets.main.output.dir(extrasDirectory,builtBy:tasks.named('embedLegacyMixinExtras'))

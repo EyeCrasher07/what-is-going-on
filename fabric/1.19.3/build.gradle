@@ -1,0 +1,40 @@
+plugins { id 'fabric-loom' version '1.13.6' }
+
+version='1.0.0'
+
+group='dev.wigo'
+
+base { archivesName='wigo-fabric-1.19.3' }
+
+repositories { mavenCentral() }
+
+dependencies {
+    minecraft 'com.mojang:minecraft:1.19.3'
+    mappings loom.officialMojangMappings()
+    modImplementation 'net.fabricmc:fabric-loader:0.19.5'
+    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.76.1+1.19.3'
+}
+
+java { toolchain.languageVersion=JavaLanguageVersion.of(17) }
+
+tasks.withType(JavaCompile).configureEach { options.encoding='UTF-8' }
+
+jar { preserveFileTimestamps=false;reproducibleFileOrder=true }
+
+loom { accessWidenerPath=file('src/main/resources/wigo.accesswidener') }
+
+loom.runs {
+    client { runDir 'run/client' }
+    server { runDir 'run/server'; programArg 'nogui' }
+}
+
+tasks.register('verifyProtocol', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'dev.wigo.protocol.MirrorStateTest'
+}
+// The protocol suite has its own executable assertion harness.
+tasks.named('test') { enabled = false }
+check.dependsOn verifyProtocol
+
+apply from: '../../gradle/release.gradle'

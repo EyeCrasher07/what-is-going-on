@@ -1,0 +1,42 @@
+{
+  "required": true,
+  "minVersion": "0.8.7",
+  "package": "dev.wigo.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "ContainerScreenAccessor",
+    "WidgetAccessor", "SelectionListAccessor", "FabricGuiRegistryMixin",
+    "GameModeSwitcherAccessor",
+    "GameModeSlotAccessor",
+    "GuiRendererMixin",
+    "GameRendererMixin",
+    "RenderTypeInvoker",
+    "GuiTextAccessor",
+    "SceneStateMixin",
+    "GraphicsCaptureMixin",
+    "ScreenCaptureMixin",
+    "ScreenLayoutInvoker",
+    "CarriedCaptureMixin",
+    "EntityCaptureMixin",
+    "RecipeBookAccessor",
+    "GraphicsInvoker",
+    "ChatCaptureMixin",
+    "ChatHistoryMixin",
+    "ChatAccessor",
+    "MapCaptureMixin",
+    "WidgetCaptureMixin",
+    "EditBoxCaretMixin",
+    "AtlasCaptureMixin",
+    "LevelRendererMixin",
+    "NameTagRenderMixin",
+    
+    
+    
+    
+    "MinecraftReloadMixin",
+    "TranslationCaptureMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

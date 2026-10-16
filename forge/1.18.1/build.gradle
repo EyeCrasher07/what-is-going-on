@@ -1,0 +1,123 @@
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '7.0.17'
+    id 'net.minecraftforge.jarjar' version '0.2.3'
+    id 'net.minecraftforge.renamer' version '1.0.14'
+}
+
+version='1.0.0'
+
+group='dev.wigo'
+
+base { archivesName='wigo-forge-1.18.1' }
+
+jarJar.register()
+
+tasks.named('jar') { archiveClassifier='slim' }
+
+tasks.named('jarJar') { archiveClassifier='dev' }
+
+java { toolchain.languageVersion=JavaLanguageVersion.of(17) }
+
+minecraft {
+    mappings channel: 'official', version: '1.18.1'
+    accessTransformers=files('src/main/resources/META-INF/accesstransformer.cfg')
+    runs {
+        configureEach {
+            systemProperty 'eventbus.api.strictRuntimeChecks','true'
+            systemProperty 'mixin.env.disableRefMap','true'
+            args '--mixin.config=wigo.mixins.json','--mixin.config=wigo.client.mixins.json'
+            mods {
+                wigo {
+                    source sourceSets.main
+                }
+
+            }
+        }
+        register('client') {
+            workingDir=layout.buildDirectory.dir('run/client')
+
+        }
+        register('server') { workingDir=layout.buildDirectory.dir('run/server'); args '--nogui' }
+    }
+}
+
+repositories {
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    mavenCentral()
+}
+
+dependencies {
+    implementation minecraft.dependency('net.minecraftforge:forge:1.18.1-39.1.2')
+    implementation 'io.github.llamalad7:mixinextras-forge:0.5.4'
+    compileOnly 'io.github.llamalad7:mixinextras-common:0.5.4'
+    jarJar 'io.github.llamalad7:mixinextras-forge:0.5.4'
+}
+
+tasks.withType(JavaCompile).configureEach { options.encoding='UTF-8';options.release=17 }
+
+configurations.matching { it.name in ['compileClasspath','runtimeClasspath']||it.name.endsWith('CompileClasspath')||it.name.endsWith('RuntimeClasspath') }.configureEach {
+    attributes.attribute(org.gradle.api.attributes.java.TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE,17)
+}
+
+jar {
+    preserveFileTimestamps=false
+    reproducibleFileOrder=true
+    manifest { attributes 'MixinConfigs':'wigo.mixins.json,wigo.client.mixins.json' }
+}
+
+configurations.configureEach { resolutionStrategy.force 'net.sf.jopt-simple:jopt-simple:5.0.4' }
+
+tasks.withType(JavaExec).matching { it.name in ['runClient','runServer'] }.configureEach {
+    doFirst {
+        def roots=sourceSets.main.output.files.collect { 'wigo%%'+it.absolutePath }
+
+        environment 'MOD_CLASSES',roots.join(File.pathSeparator)
+    }
+}
+
+renamer.enableMixinRefmaps {
+    config 'wigo.mixins.json'
+    config 'wigo.client.mixins.json'
+}
+
+renamer.mappings(minecraft.dependency.toSrg)
+
+def productionJar=renamer.classes(tasks.named('jarJar',Jar)) {
+    archiveClassifier=''
+    mappings renamer.mixin.generatedMappings
+    output=layout.buildDirectory.file('libs/'+base.archivesName.get()+'-'+project.version+'.jar')
+}
+
+tasks.named('assemble') { dependsOn productionJar }
+
+dependencies { annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' }
+
+dependencies { annotationProcessor 'io.github.llamalad7:mixinextras-common:0.5.4' }
+
+dependencies { implementation 'org.joml:joml:1.10.5' }
+
+configurations { wigoPresentationMath }
+
+dependencies { wigoPresentationMath 'org.joml:joml:1.10.5' }
+
+def presentationMath=layout.buildDirectory.dir('generated/presentationMath')
+
+tasks.register('embedPresentationMath',Sync) {
+ from({configurations.wigoPresentationMath.collect {zipTree(it)}}) {
+  include 'org/joml/**','META-INF/LICENSE'
+  eachFile { if(it.path=='META-INF/LICENSE')it.path='META-INF/licenses/JOML-LICENSE' }
+ }
+ into presentationMath
+ includeEmptyDirs=false
+}
+
+sourceSets.main.output.dir(presentationMath,builtBy:tasks.named('embedPresentationMath'))
+
+dependencies { compileOnly 'org.lwjgl:lwjgl:3.2.2';compileOnly 'org.lwjgl:lwjgl-opengl:3.2.2';compileOnly 'org.lwjgl:lwjgl-glfw:3.2.2' }
+
+apply from: '../../gradle/legacy-mixinextras.gradle'
+
+apply from: '../../gradle/release.gradle'
