@@ -204,5 +204,13 @@
   "wigo.cursor.search": "Magnifying glass",
   "wigo.cursor.withered": "Wither hardcore heart",
   "wigo.cursor.heart": "Heart",
-  "wigo.cursor.bug": "Bug"
+  "wigo.cursor.bug": "Bug",
+  "wigo.preview.title": "Preview",
+  "wigo.preview.rotate": "Drag: rotate · Wheel: zoom\nClick: pause",
+  "wigo.preview.paused": "Drag: rotate · Wheel: zoom\nClick: spin",
+  "wigo.settings.shareChat": "Share chat",
+  "wigo.settings.shareChat.description": "Share your chat draft. Turning this off also hides commands and nearby draft previews.",
+  "wigo.settings.shareCommands": "Share commands",
+  "wigo.settings.shareCommands.description": "Share drafts starting with /. Turn this off to keep commands private while sharing normal messages.",
+  "wigo.settings.shareCommands.disabled": "Enable chat sharing first."
 }

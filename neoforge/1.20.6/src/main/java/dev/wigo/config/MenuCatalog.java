@@ -9,6 +9,7 @@ public final class MenuCatalog {
     public static final String UNSUPPORTED = "wigo:unsupported";
     public static final String SETTINGS = "wigo:settings";
     public static final String ENDER_CHEST = "minecraft:ender_chest";
+    public static final String CHAT = "minecraft:chat";
     private static final List<Menu> menus = new ArrayList<>();
     private static final Map<String, Menu> byId = new LinkedHashMap<>();
     private static final Map<String, String> byTitle = new HashMap<>();

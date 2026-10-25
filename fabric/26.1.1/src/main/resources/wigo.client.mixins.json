@@ -9,6 +9,7 @@
     "GameModeSwitcherAccessor",
     "GameModeSlotAccessor",
     "GuiRendererMixin",
+    "PreviewGraphicsAccessor",
     "GameRendererMixin",
     "RenderTypeInvoker",
     "GuiTextAccessor",
@@ -25,14 +26,13 @@
     "ChatAccessor",
     "MapCaptureMixin",
     "WidgetCaptureMixin",
+    "WidgetOriginMixin",
     "EditBoxCaretMixin",
     "AtlasCaptureMixin",
     "LevelRendererMixin",
     "NameTagRenderMixin",
     "NameTagDepthMixin",
     "NameTagTextMixin",
-    
-    
     "MinecraftReloadMixin",
     "TranslationCaptureMixin"
   ],

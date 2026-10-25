@@ -10,7 +10,8 @@ import java.io.IOException;
 
 public final class Settings {
     public static boolean enabled = true;
-    public static boolean share = true, receive = true, showUnsupportedMenus = true;
+    public static boolean share = true, receive = true, showUnsupportedMenus = false;
+    public static boolean shareCommands = false;
     public static int transparency = 0, brightness = 100, size = 100, curvature = 0;
     public static boolean autoBrightness = false;
     public static int panelOffset = 0, panelPitch = 0;
@@ -54,7 +55,7 @@ public final class Settings {
         replaceRules(rules.mode(), rules.side(), rules.disabled());
     }
     public static void resetMyMenus() {
-        resetKeys("share","sharing","whitelist","blacklist","showObservers","sharingDistance","observerX","observerY","cursorStyle");
+        resetKeys("share","shareCommands","sharing","whitelist","blacklist","showObservers","sharingDistance","observerX","observerY","cursorStyle");
     }
     public static void resetOtherMenus() {
         resetKeys("receive","showUnsupportedMenus","transparency","brightness","size","curvature","autoBrightness",
@@ -80,6 +81,7 @@ public final class Settings {
     public static JsonObject json() {
         JsonObject json = new JsonObject(); json.addProperty("enabled",enabled);json.addProperty("share", share); json.addProperty("receive", receive);
         json.addProperty("showUnsupportedMenus", showUnsupportedMenus);
+        json.addProperty("shareCommands", shareCommands);
         json.addProperty("transparency", transparency); json.addProperty("size", size); json.addProperty("curvature", curvature);
         json.addProperty("brightness", brightness); json.addProperty("reverseCurvature", reverseCurvature);
         json.addProperty("autoBrightness",autoBrightness);json.addProperty("panelOffset",panelOffset);json.addProperty("panelPitch",panelPitch);
@@ -98,7 +100,8 @@ public final class Settings {
         List<SharingRules.PlayerRef> white = json.has("whitelist") ? SharingRules.parsePlayers(json.getAsJsonArray("whitelist")) : dev.wigo.compat.Java8.list();
         List<SharingRules.PlayerRef> black = json.has("blacklist") ? SharingRules.parsePlayers(json.getAsJsonArray("blacklist")) : dev.wigo.compat.Java8.list();
         boolean nextEnabled=flag(json,"enabled",true);
-        boolean nextShare = flag(json,"share",true), nextReceive = flag(json,"receive",true), nextUnsupported = flag(json,"showUnsupportedMenus",true);
+        boolean commands=flag(json,"shareCommands",false);
+        boolean nextShare = flag(json,"share",true), nextReceive = flag(json,"receive",true), nextUnsupported = flag(json,"showUnsupportedMenus",false);
         boolean mirror = flag(json,"realisticMirroring",false), smooth = flag(json,"smoothMenus",false), reverse = flag(json,"reverseCurvature",false);
         int alpha = amount(json,"transparency",0,0,100), scale = amount(json,"size",100,50,200), bend = amount(json,"curvature",0,0,100);
         int light = amount(json,"brightness",100,0,200);
@@ -111,7 +114,7 @@ public final class Settings {
         rules = new SharingRules(next.mode(), next.side(), next.disabled(), next.mode() == SharingRules.Mode.ALL ? dev.wigo.compat.Java8.list()
                 : next.mode() == SharingRules.Mode.WHITELIST ? white : black);
         whitelist = new ArrayList<>(white); blacklist = new ArrayList<>(black); rulesRevision++;
-        enabled=nextEnabled;share = nextShare; receive = nextReceive; showUnsupportedMenus = nextUnsupported;
+        enabled=nextEnabled;shareCommands=commands;share = nextShare; receive = nextReceive; showUnsupportedMenus = nextUnsupported;
         transparency = alpha; size = scale; curvature = bend; realisticMirroring = mirror; smoothMenus = smooth;
         brightness = light; reverseCurvature = reverse;
         autoBrightness=automatic;panelOffset=offset;panelPitch=pitch;

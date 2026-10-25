@@ -13,15 +13,20 @@ public final class WigoSettingsScreen extends WigoScreen {
     public enum Tab { MINE, OTHERS }
     private Tab tab;
     private Button mine, others, done, reset;
+    private final SettingsPreviewWidget preview=new SettingsPreviewWidget();
     private int controlScroll,visibleRows,firstRowY;
     private boolean draggingScroll;
     private double scrollGrab;
     private int policyMaximum;
-    private boolean policyPersonal,policyCounter,policySmooth;
+    private boolean policyPersonal,policyCounter,policySmooth,policyChat;
     private final List<AbstractWidget> controls = new ArrayList<>();
     public WigoSettingsScreen(Screen previous) {this(previous, Tab.MINE);}
     public WigoSettingsScreen(Screen previous, Tab tab) {super(previous,"wigo.settings.title"); this.tab = tab;}
     public Tab tab() {return tab;}
+    private int previewWidth(){return Math.min(240,Math.max(64,(width-24)*3/10));}
+    // Observers receive the centered window; the mannequin's reserved space is local only.
+    @Override protected int bodyWidth(){return GuiCapture.active()?super.bodyWidth():Math.min(400,width-44-previewWidth());}
+    @Override protected int bodyX(){return GuiCapture.active()?super.bodyX():(width-bodyWidth()-20-previewWidth())/2;}
     public void selectTab(Tab value) {tab = value; controlScroll=0; rebuildWidgets();}
     public void resetSettings() {
         if(tab==Tab.MINE){Settings.resetMyMenus();WigoClient.observerCount=0;}
@@ -33,6 +38,7 @@ public final class WigoSettingsScreen extends WigoScreen {
         draggingScroll=false;
         policyMaximum=WigoClient.maxSharingDistance();policyPersonal=WigoClient.personalDistance();
         policyCounter=WigoClient.allowsObserverCounter();policySmooth=WigoClient.allowsSmoothMode();
+        policyChat=WigoClient.serverAllows(dev.wigo.config.MenuCatalog.CHAT);
         mine = button(Component.translatable("wigo.settings.tab.mine"), () -> selectTab(Tab.MINE), "wigo.settings.tab.mine.description");
         others = button(Component.translatable("wigo.settings.tab.others"), () -> selectTab(Tab.OTHERS), "wigo.settings.tab.others.description");
         mine.active = tab != Tab.MINE; others.active = tab != Tab.OTHERS;
@@ -55,6 +61,16 @@ public final class WigoSettingsScreen extends WigoScreen {
             controls.add(addRenderableWidget(new DistanceSlider()));
             controls.add(addRenderableWidget(WigoIconButton.cursorButton(Component.translatable("wigo.settings.cursor",
                     Component.translatable(Settings.cursorStyle.label())),b->minecraft.setScreen(new CursorSelectionScreen(this)),Settings.cursorStyle)));
+            boolean chatAllowed=WigoClient.serverAllows(dev.wigo.config.MenuCatalog.CHAT);
+            var chat=button(toggle("wigo.settings.shareChat",Settings.menuEnabled(dev.wigo.config.MenuCatalog.CHAT)&&chatAllowed),()->{
+                Settings.toggleMenu(dev.wigo.config.MenuCatalog.CHAT);rebuildWidgets();
+            },chatAllowed?"wigo.settings.shareChat.description":"wigo.settings.admin.blocked");
+            chat.active=chatAllowed;controls.add(chat);
+            var commands=button(toggle("wigo.settings.shareCommands",Settings.shareCommands&&chatAllowed&&Settings.menuEnabled(dev.wigo.config.MenuCatalog.CHAT)),()->{
+                Settings.shareCommands=!Settings.shareCommands;Settings.save();rebuildWidgets();
+            },!chatAllowed?"wigo.settings.admin.blocked":!Settings.menuEnabled(dev.wigo.config.MenuCatalog.CHAT)
+                    ?"wigo.settings.shareCommands.disabled":"wigo.settings.shareCommands.description");
+            commands.active=chatAllowed&&Settings.menuEnabled(dev.wigo.config.MenuCatalog.CHAT);controls.add(commands);
         } else {
             controls.add(button(toggle("wigo.settings.receive",Settings.receive), () -> {
                 Settings.receive = !Settings.receive; Settings.save();
@@ -90,6 +106,7 @@ public final class WigoSettingsScreen extends WigoScreen {
         done = button(Component.translatable("gui.done"), this::onClose, null);
         reset=addRenderableWidget(WigoIconButton.resetButton(b->minecraft.setScreen(new WigoResetScreen(this,tab))));
         reset.setTooltip(Tooltip.create(Component.translatable("wigo.settings.reset.description")));
+        addRenderableWidget(preview);
         layoutWidgets();
     }
     private void slider(String key,int current,int min,int max,IntConsumer change) {
@@ -101,7 +118,7 @@ public final class WigoSettingsScreen extends WigoScreen {
         mine.setRectangle((w-4)/2,20,x,top+30); others.setRectangle((w-4)/2,20,x+(w+4)/2,top+30);
         if(tab == Tab.MINE) {
             firstRowY=top+(bodyHeight()<300?60:80);
-            visibleRows=Math.max(1,Math.min(6,(bodyBottom()-32-firstRowY+ROW_STEP-20)/ROW_STEP));
+            visibleRows=Math.max(1,Math.min(rowCount(),(bodyBottom()-32-firstRowY+ROW_STEP-20)/ROW_STEP));
             int offset=rowOffset();
             for(int i=0;i<controls.size();i++) {
                 int row=i<2?0:i<4?i-1:i<6?3:i-2;
@@ -119,10 +136,11 @@ public final class WigoSettingsScreen extends WigoScreen {
                 widget.visible=i>=offset&&i<offset+visibleRows;
             }
         }
+        preview.setRectangle(previewWidth(),bodyHeight()-16,x+w+20,top+8);
         done.setRectangle(w-28,20,x,bodyBottom()-26);
         reset.setRectangle(24,20,x+w-24,bodyBottom()-26);
     }
-    private int rowCount(){return tab==Tab.MINE?6:controls.size();}
+    private int rowCount(){return tab==Tab.MINE?controls.size()-2:controls.size();}
     private int rowOffset(){return Math.clamp(controlScroll,0,Math.max(0,rowCount()-visibleRows));}
     @Override public boolean mouseScrolled(double x,double y,double horizontal,double vertical) {
         if(visibleRows<rowCount()&&x>=bodyX()&&x<=bodyX()+bodyWidth()+10
@@ -166,9 +184,19 @@ public final class WigoSettingsScreen extends WigoScreen {
         }
 
     }
+    @Override protected void heading(GuiGraphicsExtractor g,String description) {
+        float scale=Math.min(1,(bodyWidth()-8)/(float)font.width(title));
+        g.pose().pushMatrix();g.pose().translate(bodyX()+bodyWidth()/2f,bodyY()+12);g.pose().scale(scale,scale);
+        g.text(font,title,-font.width(title)/2,0,TEXT,false);g.pose().popMatrix();
+        if(description!=null) {
+            var text=Component.translatable(description);
+            g.text(font,text,bodyX()+(bodyWidth()-font.width(text))/2,bodyY()+60,SECONDARY,false);
+        }
+    }
     public static String modeKey(SharingRules.Mode mode) {return "wigo.settings.mode."+mode.name().toLowerCase(Locale.ROOT);}
     @Override public void tick(){
         if(policyCounter!=WigoClient.allowsObserverCounter()||policySmooth!=WigoClient.allowsSmoothMode()
+                ||policyChat!=WigoClient.serverAllows(dev.wigo.config.MenuCatalog.CHAT)
                 ||tab==Tab.MINE&&(policyMaximum!=WigoClient.maxSharingDistance()||policyPersonal!=WigoClient.personalDistance()))rebuildWidgets();
     }
     private static final class DistanceSlider extends AbstractSliderButton {

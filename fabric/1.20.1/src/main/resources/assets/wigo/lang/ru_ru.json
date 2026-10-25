@@ -204,5 +204,13 @@
   "wigo.cursor.search": "Лупа",
   "wigo.cursor.withered": "Иссушенное сердце",
   "wigo.cursor.heart": "Сердце",
-  "wigo.cursor.bug": "Жук"
+  "wigo.cursor.bug": "Жук",
+  "wigo.preview.title": "Предпросмотр",
+  "wigo.preview.rotate": "Тяни — поворот · Колесо — масштаб\nНажми — пауза",
+  "wigo.preview.paused": "Тяни — поворот · Колесо — масштаб\nНажми — вращение",
+  "wigo.settings.shareChat": "Показывать чат",
+  "wigo.settings.shareChat.description": "Показывать набираемые сообщения. При выключении также скрываются команды и предпросмотр черновиков.",
+  "wigo.settings.shareCommands": "Показывать команды",
+  "wigo.settings.shareCommands.description": "Показывать ввод, начинающийся с /. Выключите, чтобы скрывать команды, сохранив показ обычных сообщений.",
+  "wigo.settings.shareCommands.disabled": "Сначала включите показ чата."
 }

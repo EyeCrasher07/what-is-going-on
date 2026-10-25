@@ -34,6 +34,19 @@ public final class GuiTextStyles {
         for(var valueRun:runs) {var run=valueRun.getAsJsonArray();if(!run.get(1).getAsString().equals("minecraft:default")||!run.get(2).isJsonNull()||run.get(3).getAsInt()!=0)styled=true;}
         if(styled)command.add(runs);
     }
+    /** Keep WIGO's small world labels legible while retaining colored status text and alpha. */
+    public static void wigoContrast(JsonArray command,boolean control) {
+        command.set(6,new JsonPrimitive(wigoColor(command.get(6).getAsInt(),control)));
+        if(command.size()>9&&!command.get(9).isJsonNull())for(var value:command.get(9).getAsJsonArray()) {
+            var run=value.getAsJsonArray();
+            if(!run.get(2).isJsonNull())run.set(2,new JsonPrimitive(wigoColor(run.get(2).getAsInt(),control)));
+        }
+    }
+    private static int wigoColor(int color,boolean control) {
+        int rgb=color&0xFFFFFF;
+        int adjusted=control&&rgb==0xA0A0A0?0xE0E0E0:!control&&rgb==0x404040?0x202020:!control&&rgb==0x555555?0x303030:rgb;
+        return color&0xFF000000|adjusted;
+    }
     public static FormattedCharSequence text(JsonArray command) {
         if(command.size()<10||command.get(9).isJsonNull())return FormattedCharSequence.forward(command.get(3).getAsString(),Style.EMPTY);
         List<Run> runs=new ArrayList<>();

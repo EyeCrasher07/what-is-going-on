@@ -24,7 +24,9 @@ public abstract class ScreenCaptureMixin {
                 GuiCapture.layout(view);
                 float[] point = view.pointer().point(x, y);
                 var scratch = new GuiGraphicsExtractor(Minecraft.getInstance(), new GuiRenderState(), Math.round(point[0]), Math.round(point[1]));
-                original.call(scratch, Math.round(point[0]), Math.round(point[1]), delta);
+                if(GuiCapture.isolatedPause(screen))
+                    GuiCapture.pauseContents(screen,scratch,Math.round(point[0]),Math.round(point[1]),delta);
+                else original.call(scratch, Math.round(point[0]), Math.round(point[1]), delta);
             } catch (RuntimeException invalid) { GuiCapture.fail(); }
             finally { GuiCapture.end(); }
         }

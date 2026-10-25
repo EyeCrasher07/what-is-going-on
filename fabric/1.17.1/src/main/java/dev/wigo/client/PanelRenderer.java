@@ -118,7 +118,7 @@ public final class PanelRenderer {
         }
     }
 
-    private static void draw(GuiGraphics g, RemoteMenu menu, Player actor, GuiReplay replay) {
+    static void draw(GuiGraphics g, RemoteMenu menu, Player actor, GuiReplay replay) {
         Minecraft mc = Minecraft.getInstance();
         int height = menu.state.height();
         g.pose().pushPose(); g.pose().translate(PAD, PAD,0);
@@ -195,18 +195,7 @@ public final class PanelRenderer {
     }
 
     public static int[] position(RemoteMenu menu, int slot) {
-        if (menu.state.kind.equals("chest")) {
-            int chestSlots = menu.state.rows * 9;
-            if (slot < chestSlots) return new int[]{8 + slot % 9 * 18, 18 + slot / 9 * 18};
-            int i = slot - chestSlots;
-            return new int[]{8 + i % 9 * 18, menu.state.rows * 18 + (i < 27 ? 31 + i / 9 * 18 : 89)};
-        }
-        if (slot == 0) return new int[]{154, 28};
-        if (slot < 5) return new int[]{98 + (slot - 1) % 2 * 18, 18 + (slot - 1) / 2 * 18};
-        if (slot < 9) return new int[]{8, 8 + (slot - 5) * 18};
-        if (slot < 36) return new int[]{8 + (slot - 9) % 9 * 18, 84 + (slot - 9) / 9 * 18};
-        if (slot < 45) return new int[]{8 + (slot - 36) * 18, 142};
-        return new int[]{77, 62};
+        return MenuSlots.position(menu.state.kind,menu.state.rows,slot);
     }
 
     public static void submit(PoseStack pose,MultiBufferSource.BufferSource buffers,Camera camera,float delta) {

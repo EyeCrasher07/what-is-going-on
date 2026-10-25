@@ -5,10 +5,13 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "ContainerScreenAccessor",
-    "WidgetAccessor", "SelectionListAccessor", "FabricGuiRegistryMixin",
+    "WidgetAccessor",
+    "SelectionListAccessor",
+    "FabricGuiRegistryMixin",
     "GameModeSwitcherAccessor",
     "GameModeSlotAccessor",
     "GuiRendererMixin",
+    "PreviewGraphicsAccessor",
     "GameRendererMixin",
     "RenderTypeInvoker",
     "GuiTextAccessor",
@@ -25,14 +28,11 @@
     "ChatAccessor",
     "MapCaptureMixin",
     "WidgetCaptureMixin",
+    "WidgetOriginMixin",
     "EditBoxCaretMixin",
     "AtlasCaptureMixin",
     "LevelRendererMixin",
     "NameTagRenderMixin",
-    
-    
-    
-    
     "MinecraftReloadMixin",
     "TranslationCaptureMixin"
   ],

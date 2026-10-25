@@ -64,22 +64,33 @@ public final class GuiLayout implements AutoCloseable {
             firstMouseX=switcher.wigoFirstX();firstMouseY=switcher.wigoFirstY();firstMouseSet=switcher.wigoFirstSet();
         }
         discoverLayouts();
+        // Added mod buttons must neither enter the transmitted scene nor anchor its layout.
+        // Keep their original boxes in widgets so close() restores the owner's whole screen.
+        // The settings mannequin is never transmitted and must not anchor pointer mapping.
+        var presentationWidgets = widgets.stream().filter(w -> !GuiCapture.decoration(screen,w.widget))
+                .filter(w -> !(screen instanceof PauseScreen) || GuiCapture.pauseWidget(w.widget)).toList();
+        var pauseBounds = screen instanceof PauseScreen
+                ? presentationWidgets.stream().filter(w -> w.widget instanceof AbstractButton).toList() : presentationWidgets;
+        var pauseGaps = omittedPauseRows(pauseBounds);
         int dx = WIDTH / 2 - oldWidth / 2, dy = HEIGHT / 2 - oldHeight / 2;
-        int pauseLeft=widgets.stream().filter(w->!(w.widget instanceof StringWidget)).mapToInt(w->w.x).min().orElse(0);
-        int pauseRight=widgets.stream().filter(w->!(w.widget instanceof StringWidget)).mapToInt(w->w.x+w.width).max().orElse(oldWidth);
-        int pauseTop=widgets.stream().filter(w->!(w.widget instanceof StringWidget)).mapToInt(w->w.y).min().orElse(0);
-        int pauseBottom=widgets.stream().filter(w->!(w.widget instanceof StringWidget)).mapToInt(w->w.y+w.height).max().orElse(oldHeight);
+        int pauseLeft=pauseBounds.stream().filter(w->w.visible&&!(w.widget instanceof StringWidget)).mapToInt(w->w.x).min().orElse(0);
+        int pauseRight=pauseBounds.stream().filter(w->w.visible&&!(w.widget instanceof StringWidget)).mapToInt(w->w.x+w.width).max().orElse(oldWidth);
+        int pauseTop=pauseBounds.stream().filter(w->w.visible&&!(w.widget instanceof StringWidget)).mapToInt(w->w.y).min().orElse(0);
+        int pauseBottom=pauseBounds.stream().filter(w->w.visible&&!(w.widget instanceof StringWidget)).mapToInt(w->w.y+w.height).max().orElse(oldHeight);
         // Vanilla's pause grid includes 50px top padding and a 4px cell margin.
         // Match its truncation after subtracting grid height, including short viewports.
         int pauseHeight=pauseBottom-pauseTop+54;
-        int pauseDy=(HEIGHT-pauseHeight)/4-(oldHeight-pauseHeight)/4;
+        int removedHeight=pauseGaps.values().stream().mapToInt(Integer::intValue).sum();
+        int pauseDy=(HEIGHT-pauseHeight+removedHeight)/4-(oldHeight-pauseHeight)/4;
         changed = true; screen.width = WIDTH; screen.height = HEIGHT;
+        if (screen instanceof PauseScreen)
+            for (var box : widgets) if (!GuiCapture.pauseWidget(box.widget)) box.widget.visible = false;
         if(screen instanceof BookLayoutCache cache)cache.wigoClearBookLayout();
         if(switcher!=null) {switcher.wigoFirstX(firstMouseX+dx);switcher.wigoFirstY(firstMouseY+dy);}
         for (var entry : offsets.entrySet()) set(entry.getKey(), entry.getValue() + (entry.getKey().getName().equals("leftPos") ? dx : dy));
         if(nativeScrollLayout) ((ScreenLayoutInvoker)screen).wigoRepositionElements();
         else if(screen instanceof WigoScreen owned)owned.layoutWidgets();
-        else for (var box : widgets) {
+        else for (var box : presentationWidgets) {
             AbstractWidget w = box.widget;
             if (w instanceof AbstractSelectionList<?>) continue;
             var parent=widgetLists.get(w);
@@ -96,6 +107,8 @@ public final class GuiLayout implements AutoCloseable {
                     || w.getMessage().getString().equals(net.minecraft.network.chat.CommonComponents.GUI_CANCEL.getString()));
             int moveY = quarterButton ? HEIGHT/4-oldHeight/4 : bookScreen() || technicalScreen() ? 0 : screen instanceof GameModeSwitcherScreen ? dy : screen instanceof PauseScreen ? (w instanceof StringWidget ? 0 : pauseDy)
                     : box.y < 33 ? 0 : box.y >= oldHeight - (lists.isEmpty() ? 40 : 64) ? HEIGHT - oldHeight : dy;
+            if (screen instanceof PauseScreen && !(w instanceof StringWidget))
+                moveY-=pauseGaps.headMap(box.y).values().stream().mapToInt(Integer::intValue).sum();
             boolean fullWidth=w instanceof EditBox&&box.width>=oldWidth-64;
             int moveX=fullWidth?0:screen instanceof PauseScreen && !(w instanceof StringWidget) ? WIDTH/2-(pauseLeft+pauseRight)/2 : dx;
             int width=fullWidth?Math.max(20,WIDTH-(oldWidth-box.width)):box.width;
@@ -129,6 +142,24 @@ public final class GuiLayout implements AutoCloseable {
                 scroll+=Math.max(0,Math.clamp(mouseY,box.y,box.y+box.height)-box.y-box.widget.getHeight()+8);
             box.widget.setScrollAmount(scroll);
         }
+        if (screen instanceof PauseScreen) {
+            // Loaders may insert an extra icon into a centered vanilla icon row.
+            // Center the remaining icons too, rather than leaving the removed slot's gap.
+            Map<Integer,List<WidgetBox>> iconRows = new LinkedHashMap<>();
+            for (var box : presentationWidgets)
+                if (box.visible && box.widget instanceof AbstractButton && box.width <= 24 && box.height <= 24)
+                    iconRows.computeIfAbsent(box.y, ignored -> new ArrayList<>()).add(box);
+            for (var entry : iconRows.entrySet()) {
+                var row = entry.getValue();
+                if (row.size() < 2 || widgets.stream().noneMatch(w -> w.visible && w.y == entry.getKey()
+                        && !GuiCapture.pauseWidget(w.widget))) continue;
+                int min = row.stream().mapToInt(w -> w.widget.getX()).min().orElse(0);
+                int max = row.stream().mapToInt(w -> w.widget.getX()+w.widget.getWidth()).max().orElse(0);
+                int shift = WIDTH/2-(min+max)/2;
+                for (var box : row)
+                    box.widget.setRectangle(box.width,box.height,box.widget.getX()+shift,box.widget.getY());
+            }
+        }
         List<Mapping> mappings = new ArrayList<>();
         // Lists map by row position, rather than stretching the row under the cursor.
         for (var box : lists) if(box.widget.visible&&box.width>0&&box.height>0) mappings.add(new Mapping(box.x, box.y, box.width, box.height,
@@ -136,13 +167,31 @@ public final class GuiLayout implements AutoCloseable {
                 box.widget.getY() + (float)(box.scroll - box.widget.scrollAmount()), 1, 1));
         for(var box:scrolls)if(box.widget.visible&&box.width>0&&box.height>0)mappings.add(new Mapping(box.x,box.y,box.width,box.height,
                 box.widget.getX(),box.widget.getY()+(float)(box.scroll-box.widget.scrollAmount()),1,1));
-        for (var box : widgets) {
+        for (var box : presentationWidgets) {
             if (!box.visible || box.width<=0 || box.height<=0 || box.widget instanceof AbstractSelectionList<?> || widgetLists.containsKey(box.widget)
+                    || screen instanceof PauseScreen && box.widget instanceof ContainerEventHandler && !(box.widget instanceof AbstractButton)
                     ||scrollChildren.contains(box.widget)||scrolls.stream().anyMatch(s->s.widget==box.widget)) continue;
             mappings.add(new Mapping(box.x, box.y, box.width, box.height, box.widget.getX(), box.widget.getY(),
                     box.widget.getWidth() / (float)Math.max(1, box.width), box.widget.getHeight() / (float)Math.max(1, box.height)));
         }
         pointer = new PointerMap(dx, dy, List.copyOf(mappings));
+    }
+    private NavigableMap<Integer,Integer> omittedPauseRows(List<WidgetBox> controls) {
+        NavigableMap<Integer,Integer> gaps=new TreeMap<>();
+        if (!(screen instanceof PauseScreen)) return gaps;
+        var visible=controls.stream().filter(w->w.visible&&w.width>0&&w.height>0).toList();
+        int left=visible.stream().mapToInt(w->w.x).min().orElse(0);
+        int right=visible.stream().mapToInt(w->w.x+w.width).max().orElse(0);
+        int top=visible.stream().mapToInt(w->w.y).min().orElse(0);
+        int bottom=visible.stream().mapToInt(w->w.y+w.height).max().orElse(0);
+        // Collapse a complete removed grid row, such as Forge's Mods button.
+        // Floating corner buttons and controls beside a vanilla row do not form gaps.
+        for (var box:widgets) if (box.visible && box.widget instanceof AbstractButton
+                && !GuiCapture.pauseWidget(box.widget) && box.x==left && box.x+box.width==right
+                && box.y>top && box.y+box.height<bottom
+                && visible.stream().noneMatch(w->box.y<w.y+w.height&&box.y+box.height>w.y))
+            gaps.merge(box.y,box.height+4,Math::max);
+        return gaps;
     }
     private boolean bookScreen() {
         return screen instanceof BookEditScreen || screen instanceof BookViewScreen || screen instanceof BookSignScreen;

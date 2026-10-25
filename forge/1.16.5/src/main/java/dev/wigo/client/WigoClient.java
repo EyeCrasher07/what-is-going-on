@@ -86,6 +86,7 @@ public final class WigoClient {
         if(localTranslations!=null)localTranslations.reload();
         TextProvenance.clear();GuiCapture.resync();PanelRenderer.close();
         CursorSprites.clear();
+        SettingsPreviewRenderer.invalidate();
         if(connected&&Minecraft.getInstance().level!=null)resetIncoming();
     }
     public static void initialize() {
@@ -248,17 +249,32 @@ public final class WigoClient {
         float x = -16, y = -16;
         int hover = -1;
         if (kind.equals("gui")) {
-            float[] point = GuiCapture.pointer((float)(mc.mouseHandler.xpos()*mc.getWindow().getGuiScaledWidth()/mc.getWindow().getScreenWidth()), (float)(mc.mouseHandler.ypos()*mc.getWindow().getGuiScaledHeight()/mc.getWindow().getScreenHeight()));
-            x = point[0]; y = point[1];
+            if(!VanillaGui.overAddedControl(screen,(mc.mouseHandler.xpos()*mc.getWindow().getGuiScaledWidth()/mc.getWindow().getScreenWidth()),(mc.mouseHandler.ypos()*mc.getWindow().getGuiScaledHeight()/mc.getWindow().getScreenHeight()))) {
+                float[] point = GuiCapture.pointer((float)(mc.mouseHandler.xpos()*mc.getWindow().getGuiScaledWidth()/mc.getWindow().getScreenWidth()), (float)(mc.mouseHandler.ypos()*mc.getWindow().getGuiScaledHeight()/mc.getWindow().getScreenHeight()));
+                x = point[0]; y = point[1];
+            }
         } else if (kind.equals("chest") || kind.equals("inventory")) {
             if (screen instanceof ContainerScreen<?> container) {
                 ContainerScreenAccessor bounds = (ContainerScreenAccessor)container;
                 x = (float)((mc.mouseHandler.xpos()*mc.getWindow().getGuiScaledWidth()/mc.getWindow().getScreenWidth()) - bounds.wigoLeft());
                 y = (float)((mc.mouseHandler.ypos()*mc.getWindow().getGuiScaledHeight()/mc.getWindow().getScreenHeight()) - bounds.wigoTop());
-                x = dev.wigo.protocol.LegacyClamp.clamp(x, -16, 192); y = dev.wigo.protocol.LegacyClamp.clamp(y, -16, bounds.wigoHeight() + 16);
+                int rows=container.getMenu() instanceof net.minecraft.inventory.container.ChestContainer chest?chest.getRowCount():0;
+                float sourceX=x,sourceY=y;
                 for (int i = 0; i < container.getMenu().slots.size(); i++) {
                     var slot = container.getMenu().getSlot(i);
-                    if (x >= slot.x - 1 && x < slot.x + 17 && y >= slot.y - 1 && y < slot.y + 17) { hover = i; break; }
+                    if (sourceX >= slot.x - 1 && sourceX < slot.x + 17 && sourceY >= slot.y - 1 && sourceY < slot.y + 17) {
+                        hover=i;int[] point=MenuSlots.position(kind,rows,i);
+                        x=point[0]+sourceX-slot.x;y=point[1]+sourceY-slot.y;break;
+                    }
+                }
+                if(hover<0) {
+                    int height=kind.equals("chest")?114+rows*18:166;
+                    x=sourceX*176/Math.max(1,bounds.wigoWidth());y=sourceY*height/Math.max(1,bounds.wigoHeight());
+                    if(sourceX<0||sourceY<0||sourceX>=bounds.wigoWidth()||sourceY>=bounds.wigoHeight())x=y=-16;
+                }
+                x=dev.wigo.protocol.LegacyClamp.clamp(x,-16,192);y=dev.wigo.protocol.LegacyClamp.clamp(y,-16,kind.equals("chest")?130+rows*18:182);
+                if(VanillaGui.overAddedControl(screen,(mc.mouseHandler.xpos()*mc.getWindow().getGuiScaledWidth()/mc.getWindow().getScreenWidth()),(mc.mouseHandler.ypos()*mc.getWindow().getGuiScaledHeight()/mc.getWindow().getScreenHeight()))) {
+                    x=y=-16;hover=-1;
                 }
                 window = container.getMenu().containerId;
             }

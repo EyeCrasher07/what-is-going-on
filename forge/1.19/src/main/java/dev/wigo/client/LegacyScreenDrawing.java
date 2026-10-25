@@ -17,7 +17,8 @@ public final class LegacyScreenDrawing {
                  var viewport = GuiViewport.open(screen.width, screen.height)) {
                 GuiCapture.layout(view);
                 float[] point = view.pointer().point(x, y);
-                screen.render(new PoseStack(), Math.round(point[0]), Math.round(point[1]), delta);
+                if(GuiCapture.isolatedPause(screen))GuiCapture.pauseContents(screen,GuiGraphics.wrap(new PoseStack()),Math.round(point[0]),Math.round(point[1]),delta);
+                else screen.render(new PoseStack(), Math.round(point[0]), Math.round(point[1]), delta);
                 LegacyTooltips.render(screen,new PoseStack(),Math.round(point[0]),Math.round(point[1]));
             } catch (RuntimeException invalid) {
                 GuiCapture.fail();

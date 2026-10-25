@@ -1,4 +1,9 @@
 package dev.wigo.mixin;
+import java.util.*;
+import java.util.function.Supplier;
+import dev.wigo.client.SettingsPreviewRenderer;
+import dev.wigo.client.SettingsPreviewState;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.Window;
@@ -13,6 +18,22 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 /** Apply the panel viewport to its own renderer without mutating Minecraft's window. */
 @Mixin(GuiRenderer.class)
 public abstract class GuiRendererMixin implements OffscreenGui {
+    @ModifyVariable(method="<init>",at=@At("HEAD"),argsOnly=true)
+    private static List<?> wigoPreviewRenderer(List<?> original) {
+        var renderers=new ArrayList<Object>(original);
+        // NeoForge's constructor takes lazy registrations; vanilla and Forge take instances.
+        // This hook runs before client setup, so it cannot depend on installed loader bindings.
+        try {
+            var registration=Class.forName("net.neoforged.neoforge.client.gui.PictureInPictureRendererRegistration");
+            renderers.add(registration.getConstructor(Class.class,java.util.function.Function.class).newInstance(
+                    SettingsPreviewState.class,(java.util.function.Function<Object,SettingsPreviewRenderer>)(ignored->new SettingsPreviewRenderer())));
+        } catch(ClassNotFoundException vanilla) {
+            renderers.add(new SettingsPreviewRenderer());
+        } catch(ReflectiveOperationException failure) {
+            throw new IllegalStateException("WIGO preview renderer registration",failure);
+        }
+        return renderers;
+    }
     @Unique private RenderTarget wigo$target;
     @Unique private int wigo$scale;
 

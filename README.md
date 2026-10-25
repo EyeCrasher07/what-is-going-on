@@ -16,13 +16,15 @@ WIGO displays nearby players' open menus as panels beside them in the world. You
 - Fabric builds require Fabric API and Fabric Loader 0.19.5 or newer.
 - Java 17 for Minecraft 1.16.5–1.20.4, Java 21 for 1.20.5–1.21.11, or Java 25 for 26.x. Forge 1.16.5 also supports Java 8.
 
-Some custom screens added by other mods are unsupported.
+Controls added by other mods are not shared. Some custom screens added by other mods are unsupported.
 
 ## Getting started
 
-1. Put WIGO in the `mods` folder on the server or LAN host and each participating client.
+1. Put WIGO in the `mods` folder on the server or LAN host and each participating client. Players without WIGO can still join.
 2. Join the same world and open a supported menu. The default sharing distance is 8 blocks.
 3. Press **F8**, then **Settings**. **My menus** controls sharing; **Other players' menus** changes how you see panels.
+
+Ordinary chat text is shared by default; commands are hidden. You can change both in **My menus**. Unsupported-screen placeholders are hidden by default.
 
 ## Build
 

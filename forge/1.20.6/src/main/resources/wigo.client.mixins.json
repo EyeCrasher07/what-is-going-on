@@ -5,34 +5,38 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "ContainerScreenAccessor",
-    "WidgetAccessor", "SelectionListAccessor",
+    "WidgetAccessor",
+    "SelectionListAccessor",
     "GameModeSwitcherAccessor",
-    "GameModeSlotAccessor", "BookCacheAccessor",
-    "GuiTargetMixin", "FontCaptureMixin", "BlurCaptureMixin", "BookCaptureMixin", "BannerCaptureMixin",
+    "GameModeSlotAccessor",
+    "BookCacheAccessor",
+    "GuiTargetMixin",
+    "FontCaptureMixin",
+    "BlurCaptureMixin",
+    "BookCaptureMixin",
+    "BannerCaptureMixin",
     "GameRendererMixin",
     "RenderTypeInvoker",
-    
-    
     "GraphicsCaptureMixin",
     "ScreenCaptureMixin",
+    "PauseCaptureMixin",
     "ScreenLayoutInvoker",
     "CarriedCaptureMixin",
     "EntityCaptureMixin",
     "RecipeBookAccessor",
-    "SignScreenAccessor", "SignCaptureMixin", "GraphicsInvoker",
+    "SignScreenAccessor",
+    "SignCaptureMixin",
+    "GraphicsInvoker",
     "ChatCaptureMixin",
     "ChatHistoryMixin",
     "ChatAccessor",
     "MapCaptureMixin",
     "WidgetCaptureMixin",
+    "WidgetOriginMixin",
     "EditBoxCaretMixin",
     "AtlasCaptureMixin",
     "LevelRendererMixin",
     "NameTagRenderMixin",
-    
-    
-    
-    
     "MinecraftReloadMixin",
     "TranslationCaptureMixin"
   ],

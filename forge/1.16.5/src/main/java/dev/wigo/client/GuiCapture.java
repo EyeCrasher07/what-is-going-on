@@ -22,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.registry.Registry;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.joml.Matrix3x2fc;
 import java.util.*;
 
@@ -50,20 +51,36 @@ public final class GuiCapture {
     }
     public static String classify(Screen screen) {
         if (screen == null || !Settings.enabled || screen instanceof ObserverPositionScreen) return "none";
+        if (screen instanceof ChatScreen chat && !chatAllowed(chat)) return "none";
         if (WigoLinks.owns(screen)) return Settings.menuEnabled(dev.wigo.config.MenuCatalog.SETTINGS)
                 && WigoClient.serverAllows(dev.wigo.config.MenuCatalog.SETTINGS) ? "gui" : "none";
-        if (screen == failedScreen || (!vanillaScreen(screen)
+        if (screen == failedScreen || (!VanillaGui.knownScreen(screen)
                 && !optifineScreen(screen))) return "unsupported";
-        if (screen.getClass()==net.minecraft.client.gui.screen.VideoSettingsScreen.class && Platform.get().isModLoaded("sodium")) return "unsupported";
         if (screen instanceof ContainerScreen<?> container
-                && !container.getMenu().getClass().getName().startsWith("net.minecraft.")) return "unsupported";
-        if (screen.children().stream().anyMatch(c -> !c.getClass().getName().startsWith("net.minecraft.")
-                && !loaderDecoration(c) && !optifineWidget(c))) return "unsupported";
-        if (screen.getClass() == ChestScreen.class && ((ChestScreen)screen).getMenu() instanceof net.minecraft.inventory.container.ChestContainer) return "chest";
+                && (!container.getMenu().getClass().getName().startsWith("net.minecraft.")
+                ||dev.wigo.config.MenuTypes.id(container.getMenu()).equals(dev.wigo.config.MenuCatalog.OTHER))) return "unsupported";
+        if (screen instanceof ChestScreen && ((ContainerScreen<?>)screen).getMenu() instanceof net.minecraft.inventory.container.ChestContainer chest)
+            return chest.getRowCount()>=1&&chest.getRowCount()<=6&&chest.slots.size()==chest.getRowCount()*9+36?"chest":"unsupported";
+        if(screen instanceof InventoryScreen&&((InventoryScreen)screen).getMenu().slots.size()!=46)return "unsupported";
         // Inventory with its recipe book/effects uses the complete vanilla description too.
-        if (screen.getClass() == InventoryScreen.class && !((RecipeBookAccessor)screen).wigoRecipeBook().isVisible()
+        if (screen instanceof InventoryScreen && !((RecipeBookAccessor)screen).wigoRecipeBook().isVisible()
                 && Minecraft.getInstance().player.getActiveEffects().isEmpty()) return "inventory";
         return "gui";
+    }
+    public static boolean chatAllowed(ChatScreen screen) {
+        var input=((ChatAccessor)screen).wigoInput();
+        return Settings.menuEnabled(dev.wigo.config.MenuCatalog.CHAT)
+                &&WigoClient.serverAllows(dev.wigo.config.MenuCatalog.CHAT)
+                &&(Settings.shareCommands||input==null||!input.getValue().startsWith("/"));
+    }
+    public static boolean decoration(Screen screen,Object widget) {
+        if(widget instanceof SettingsPreviewWidget)return true;
+        if(WigoLinks.owns(screen))return false;
+        return loaderDecoration(widget)||pauseDecoration(screen,widget)
+                ||!optifineWidget(widget)&&VanillaGui.addedWidget(widget);
+    }
+    public static boolean decoration(Object widget) {
+        return recorder!=null&&decoration(recorder.screen,widget);
     }
     private static boolean optifineScreen(Screen screen) {
         if (screen.getClass().getClassLoader() != Screen.class.getClassLoader()) return false;
@@ -145,6 +162,7 @@ public final class GuiCapture {
         }
     }
     public static boolean active() { return recorder != null && muted == 0; }
+    public static boolean capturing() {return recorder!=null;}
     public static void layout(GuiLayout view) { if (recorder != null) recorder.view = view; }
     public static ScreenRectangle tooltipCanvas() {
         return active() && recorder.view != null && !(recorder.screen instanceof ChatScreen) ? recorder.canvas() : null;
@@ -167,11 +185,53 @@ public final class GuiCapture {
         return fabricPageButton(widget) || name.equals("net.neoforged.neoforge.client.gui.widget.ModsButton")
                 || name.equals("net.minecraftforge.client.gui.widget.ModsButton");
     }
+    /** Identify vanilla pause controls by translation key, never by the player's language. */
+    public static boolean pauseWidget(net.minecraft.client.gui.widget.Widget widget) {
+        // 1.19.3 renders its vanilla buttons through a widget container. Muting
+        // that parent would also mute every otherwise allowed button inside it.
+        if (widget.getClass().getName().startsWith("net.minecraft.")
+                && widget instanceof net.minecraft.client.gui.INestedGuiEventHandler container
+                && container.children().stream().anyMatch(child -> child instanceof net.minecraft.client.gui.widget.Widget nested
+                    && pauseWidget(nested))) return true;
+        var component = widget.getMessage();
+        if (!(component instanceof TranslationTextComponent translated)) return false;
+        return switch (translated.getKey()) {
+            case "menu.returnToGame", "gui.advancements", "gui.stats", "menu.sendFeedback", "menu.feedback",
+                    "menu.reportBugs", "menu.options", "options.worldOptions.button", "menu.multiplayerOptions.button", "menu.shareToLan",
+                    "menu.returnToMenu", "menu.disconnect", "menu.savingLevel", "menu.playerReporting",
+                    "gui.socialInteractions", "gui.friends.open", "menu.game", "menu.paused" -> true;
+            default -> false;
+        };
+    }
+    public static boolean pauseDecoration(Screen screen, Object child) {
+        return screen instanceof net.minecraft.client.gui.screen.IngameMenuScreen
+                && child instanceof net.minecraft.client.gui.widget.Widget widget && !pauseWidget(widget);
+    }
+    public static boolean pauseDecoration(Object widget) {
+        return recorder != null && pauseDecoration(recorder.screen, widget);
+    }
+    /** Capture native pause controls without running another mod's screen overlays twice. */
+    public static boolean isolatedPause(Screen screen) {
+        return screen instanceof net.minecraft.client.gui.screen.IngameMenuScreen&&Platform.get().isModLoaded("essential")
+                &&screen.children().stream().anyMatch(child->child instanceof net.minecraft.client.gui.widget.Widget widget&&pauseWidget(widget));
+    }
+    public static void pauseContents(Screen screen,GuiGraphics graphics,int x,int y,float delta) {
+        boolean title=false;
+        for(var child:screen.children())if(child instanceof net.minecraft.client.gui.widget.Widget widget
+                &&widget.visible&&pauseWidget(widget)) {
+            widget.render(graphics.pose(),x,y,delta);
+            title|=widget.getMessage().equals(screen.getTitle());
+        }
+        if(!title)graphics.drawCenteredString(Minecraft.getInstance().font,screen.getTitle(),screen.width/2,40,0xFFFFFFFF);
+    }
     public static void fail() { fail("Unsupported drawing element"); }
     public static void fail(String reason) {
         if (recorder != null && !recorder.failed) { recorder.failed = true; recorder.failure = reason; }
     }
     public static void tick() {
+        if(Minecraft.getInstance().screen instanceof ChatScreen chat&&!chatAllowed(chat)) {
+            latest=sent=uploading=null;outgoing.clear();return;
+        }
         if (!needed || latest == null || !Settings.sharing() || !Platform.get().canSendGui()) return;
         if (outgoing.isEmpty() && !latest.same(sent)) {
             uploading = latest;
@@ -232,6 +292,10 @@ public final class GuiCapture {
         if(plain.length()==0)return;var matrix=pose(m);int left=Math.round(x),top=Math.round(y);
         JsonArray command=command("t",matrix,recorder.clip(),plain.toString(),left,top,color,shadow,background);
         GuiTextStyles.add(command,value);
+        if(recorder.screen instanceof WigoScreen&&recorder.overlays==0)
+            GuiTextStyles.wigoContrast(command,currentWidget instanceof net.minecraft.client.gui.widget.button.AbstractButton
+                    ||currentWidget instanceof net.minecraft.client.gui.widget.AbstractSlider
+                    ||currentWidget instanceof net.minecraft.client.gui.widget.TextFieldWidget);
         boolean literal=currentWidget instanceof net.minecraft.client.gui.widget.TextFieldWidget||TextProvenance.literal(value);
         if(richText()&&!literal) {
             var ref=TextProvenance.reference(value);
@@ -326,6 +390,8 @@ public final class GuiCapture {
     }
     private static void add(JsonArray command, ScreenRectangle bounds) {
         if (recorder == null || recorder.failed) return;
+        if(bounds!=null&&currentWidget==null&&recorder.overlays==0&&!WigoLinks.owns(recorder.screen)
+                &&!(recorder.screen instanceof ChatScreen)&&!VanillaGui.nativeDrawing(recorder.graphics.getClass()))return;
         if (bounds != null) {
             ScreenRectangle clip = recorder.clip();
             if (clip != null) bounds = bounds.intersection(clip);

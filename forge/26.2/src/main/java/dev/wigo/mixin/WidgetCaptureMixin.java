@@ -9,7 +9,8 @@ import org.spongepowered.asm.mixin.Mixin;
 public abstract class WidgetCaptureMixin {
     @WrapMethod(method="extractRenderState")
     private void vanillaOnly(GuiGraphicsExtractor g,int x,int y,float delta,Operation<Void> original) {
-        boolean page=GuiCapture.loaderDecoration(this);
+        boolean page=GuiCapture.decoration(this);
+        if(page&&GuiCapture.capturing())return;
         if (page) GuiCapture.muted++;
         var previous=GuiCapture.widget((AbstractWidget)(Object)this);
         try {original.call(g,x,y,delta);} finally {GuiCapture.widget(previous);if(page) GuiCapture.muted--;}
